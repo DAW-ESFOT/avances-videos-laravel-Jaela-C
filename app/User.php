@@ -42,8 +42,27 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->getKey();
     }
+
     public function getJWTCustomClaims()
     {
         return [];
-    }    
+    }
+
+    public function articles()
+    {
+        return $this->hasMany('App\Article');
+    }
+    
+    public function comments()
+    {
+        return $this->hasMany('App\Comment');
+    }
+
+    /**
+        * The categories that belong to the user.
+    */
+    public function categories()
+    {
+        return $this->belongsToMany('App\Category')->as('subscriptions')->withTimestamps();   
+    }
 }
