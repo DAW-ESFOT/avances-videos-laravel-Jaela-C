@@ -1,8 +1,8 @@
 <?php
 
-use App\Comment;
 use App\Article;
 use App\User;
+use App\Comment;
 use Illuminate\Database\Seeder;
 use Tymon\JWTAuth\Facades\JWTAuth;
 

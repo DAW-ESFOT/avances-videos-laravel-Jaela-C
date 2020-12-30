@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Article;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
