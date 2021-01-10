@@ -6,6 +6,7 @@ use App\Article;
 use App\Http\Resources\Article as ArticleResource;
 use App\Http\Resources\ArticleCollection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
@@ -26,6 +27,11 @@ class ArticleController extends Controller
     {
         return response() -> json(new ArticleResource($article), 200);
     }
+
+    public function image(Article $article)
+    {
+        return response()->download(public_path(Storage::url($article->image)), $article->title);
+    }
     
     public function store(Request $request)
     {
@@ -33,7 +39,8 @@ class ArticleController extends Controller
         $request->validate([
             'title' => 'required|string|unique:articles|max:255', // ['required', 'unique:articles', 'max:255'];
             'body' => 'required',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'required|image|dimensions:min_width=200,min_height=200'
         ], self::$messages);
         //$validator = Validator::make($request->all(), [
         //    'title' => 'required|string|unique:articles|max:255',
@@ -42,7 +49,10 @@ class ArticleController extends Controller
         //if ($validator->fails()) {
         //    return response()->json(['error' => 'data_validation_failed', "error_list"=>$validator->errors()], 400);
         //}
-        $article = Article::create($request -> all());
+        $article = new Article($request->all());
+        $path = $request->image->store('public/articles');
+        $article->image = $path;
+        $article->save();
         return response()->json(new ArticleResource($article), 201);
     }
     
