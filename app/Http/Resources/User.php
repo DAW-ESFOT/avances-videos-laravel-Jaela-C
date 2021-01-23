@@ -3,9 +3,17 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class User extends JsonResource
 {
+    protected $token;
+    
+    public function __construct($resource, $token = null)
+    {
+        parent::__construct($resource);
+        $this->token = $token;
+    }
     /**
      * Transform the resource into an array.
      *
@@ -18,8 +26,16 @@ class User extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
+            // Forma 1: 'userable' => $this->userable,
+            // Forma 2:'credential_number' => $this->when(Auth::user()->userable_type == 'App\Admin', $this->userable->credential_number),
+            $this->merge($this->userable),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'token' => $this->when($this->token, $this->token)
         ];
     }
+
+    //public function token($token){
+    //    $this->token = $token;
+    //}
 }
